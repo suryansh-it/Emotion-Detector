@@ -11,6 +11,12 @@ app = create_app()
 def home() :
     render_template('index.html')
 
+@app.route('/home', method= ['GET', 'POST'])
+def capture():
+
+
+@app.route('/home' , method = ['GET'])
+def emotion():
 
 
 
