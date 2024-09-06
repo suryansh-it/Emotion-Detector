@@ -15,11 +15,22 @@ def home() :
 def capture():
 
 
+@app.route('/home', method= ['GET', 'POST'])
+def preview():
+
+
 @app.route('/home' , method = ['GET'])
 def emotion():
 
 
+@app.route('home/login', method = ['GET' , 'POST'])
+def login():
 
+@app.route('home/Signup', method = ['GET' , 'POST'])
+def signup():
+
+@app.route('home/history' , method = ['GET'])
+def history(): 
 
 if __name__ == '__main__':
     app.run(debug=True)
