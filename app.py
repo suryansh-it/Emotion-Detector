@@ -47,11 +47,11 @@ def store_image(image_bytes):
     
 
 # Retrieve image by image_id
-def retrieve_image(image_id):
+def retrieve_image(image_ids):
     with engine.connect() as connection:
-        query = select([images_table.c.image]).where(images_table.c.image_id == image_id)
-        result = connection.execute(query).fetchone()
-        return result[0] if result else None
+        query = select([images_table.c.image, images_table.c.image_id]).where(images_table.c.image_id.in_(image_ids))
+        result = connection.execute(query).fetchall()
+        return [{'image_id': row['image_id'], 'image': row['image']} for row in result]
     
 
 #delete imag after use
@@ -74,10 +74,13 @@ def capture():
     image_id = store_image(image_bytes)
     return jsonify({'image_id': image_id})
 
+
 # Route 2: Preview 3 Captured Images
 @app.route('/home', method= ['GET', 'POST'])
 def preview():
 # Query to get the last 3 images stored in the database
+
+
 
 @app.route('/home' , method = ['GET'])
 def emotion():
