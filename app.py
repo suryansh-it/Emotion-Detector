@@ -47,7 +47,7 @@ def store_image(image_bytes):
     
 
 # Retrieve image by image_id
-def retrieve_image(image_ids):
+def retrieve_images(image_ids):
     with engine.connect() as connection:
         query = select([images_table.c.image, images_table.c.image_id]).where(images_table.c.image_id.in_(image_ids))
         result = connection.execute(query).fetchall()
@@ -79,8 +79,19 @@ def capture():
 @app.route('/home', method= ['GET', 'POST'])
 def preview():
 # Query to get the last 3 images stored in the database
+    with engine.connect() as connection:
+        query = select([images_table.c.image_id]).order_by(images_table.c.upload_time.desc()).limit(3)
+        result = connection.execute(query).fetchall()
+        image_ids = [row['image_id'] for row in result]
 
 
+     # Retrieve the 3 images using their IDs
+    images = retrieve_images(image_ids)
+
+     # Convert the image data to something the frontend can display (e.g., Base64)
+    preview_images = [{'image_id': img['image_id'], 'image': img['image']} for img in images]
+
+    return jsonify(preview_images)
 
 @app.route('/home' , method = ['GET'])
 def emotion():
