@@ -52,6 +52,13 @@ def retrieve_image(image_id):
         query = select([images_table.c.image]).where(images_table.c.image_id == image_id)
         result = connection.execute(query).fetchone()
         return result[0] if result else None
+    
+
+#delete imag after use
+def delete_image (image_id):
+    with engine.connect() as connection:
+        delete_query = images_table.delete().where(images_table.c.image_id == image_id)
+        connection.execute(delete_query) 
 
 @app.route('/home', method= ['GET', 'POST'])
 def capture():
