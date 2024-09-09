@@ -1,11 +1,19 @@
-from flask import Flask , render_template
-
+from flask import Flask, render_template, request, jsonify
+from io import BytesIO
+import os
+import cv2
+from fer import FER
+from datetime import datetime
+from sqlalchemy.sql import select
+from models import engine, images_table
 
 def create_app():
     app = Flask(__name__)
 
 app = create_app()
 
+# Initialize FER emotion detector
+emotion_detector = FER()
 
 @app.route('/')
 def home() :
@@ -13,26 +21,29 @@ def home() :
 
 
 
-def detectEmotion(image_path):
-    with open(image_path,'rb') as image_stream:
-        detected_faces = face_client.face.detect_with_stream(image = image_stream ,
-                                                             return_face_attributes =['emotion'])
-        if not detected_faces:
-            return "No face detected"
+# Function to detect emotion using FER and OpenCV
+def detect_emotion(image_bytes):
+    # Convert the image bytes to a NumPy array
+    image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
+    
+    # Detect emotions on the image using FER
+    emotion_results = emotion_detector.detect_emotions(image)
+
+    if not emotion_results:
+        return {"error": "No face detected."}
+
+    # Get the emotion with the highest confidence score
+    emotions = emotion_results[0]['emotions']
+    
+    return emotions
 
 
-        emotions=detected_faces[0].face_attributes.emotion
-        emotion_scores = {
-            'anger' : emotions.anger,
-            'fear' : emotions.fear,
-            'disgust' : emotions.disgust,
-            'contempt' : emotions.contempt,
-            'happiness' : emotions.happiness,
-            'neutral' : emotions.neutral,
-            'sadness' : emotions.sadness,
-            'surprise' : emotions.surprise,
-        }
-        return emotion_scores
+# Store image temporarily in PostgreSQL
+def store_image(image_bytes):
+    with engine.connect() as connection:
+        insert_query = images_table.insert().values(image=image_bytes, upload_time=datetime.now())
+        result = connection.execute(insert_query)
+        return result.inserted_primary_key[0]
 
 @app.route('/home', method= ['GET', 'POST'])
 def capture():
