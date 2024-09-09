@@ -58,15 +58,26 @@ def retrieve_image(image_id):
 def delete_image (image_id):
     with engine.connect() as connection:
         delete_query = images_table.delete().where(images_table.c.image_id == image_id)
-        connection.execute(delete_query) 
+        connection.execute(delete_query)
 
+
+
+
+# Route 1: Capture Images
 @app.route('/home', method= ['GET', 'POST'])
 def capture():
+    file = request.files['file']
+    image_bytes = file.read()   #read img as bytes
 
 
+    #store img 
+    image_id = store_image(image_bytes)
+    return jsonify({'image_id': image_id})
+
+# Route 2: Preview 3 Captured Images
 @app.route('/home', method= ['GET', 'POST'])
 def preview():
-
+# Query to get the last 3 images stored in the database
 
 @app.route('/home' , method = ['GET'])
 def emotion():
