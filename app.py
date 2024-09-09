@@ -21,6 +21,19 @@ def detectEmotion(image_path):
             return "No face detected"
 
 
+        emotions=detected_faces[0].face_attributes.emotion
+        emotion_scores = {
+            'anger' : emotions.anger,
+            'fear' : emotions.fear,
+            'disgust' : emotions.disgust,
+            'contempt' : emotions.contempt,
+            'happiness' : emotions.happiness,
+            'neutral' : emotions.neutral,
+            'sadness' : emotions.sadness,
+            'surprise' : emotions.surprise,
+        }
+        return emotion_scores
+
 @app.route('/home', method= ['GET', 'POST'])
 def capture():
 
