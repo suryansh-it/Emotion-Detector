@@ -11,6 +11,16 @@ app = create_app()
 def home() :
     render_template('index.html')
 
+
+
+def detectEmotion(image_path):
+    with open(image_path,'rb') as image_stream:
+        detected_faces = face_client.face.detect_with_stream(image = image_stream ,
+                                                             return_face_attributes =['emotion'])
+        if not detected_faces:
+            return "No face detected"
+
+
 @app.route('/home', method= ['GET', 'POST'])
 def capture():
 
