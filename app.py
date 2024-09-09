@@ -44,6 +44,14 @@ def store_image(image_bytes):
         insert_query = images_table.insert().values(image=image_bytes, upload_time=datetime.now())
         result = connection.execute(insert_query)
         return result.inserted_primary_key[0]
+    
+
+# Retrieve image by image_id
+def retrieve_image(image_id):
+    with engine.connect() as connection:
+        query = select([images_table.c.image]).where(images_table.c.image_id == image_id)
+        result = connection.execute(query).fetchone()
+        return result[0] if result else None
 
 @app.route('/home', method= ['GET', 'POST'])
 def capture():
