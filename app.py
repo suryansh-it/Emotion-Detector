@@ -64,7 +64,7 @@ def delete_image (image_id):
 
 
 # Route 1: Capture Images
-@app.route('/home', method= ['GET', 'POST'])
+@app.route('/home/capture', method= ['GET', 'POST'])
 def capture():
     file = request.files['file']
     image_bytes = file.read()   #read img as bytes
@@ -76,7 +76,7 @@ def capture():
 
 
 # Route 2: Preview 3 Captured Images
-@app.route('/home', method= ['GET', 'POST'])
+@app.route('/home/preview_images', method= ['GET', 'POST'])
 def preview():
 # Query to get the last 3 images stored in the database
     with engine.connect() as connection:
@@ -93,8 +93,27 @@ def preview():
 
     return jsonify(preview_images)
 
-@app.route('/home' , method = ['GET'])
-def emotion():
+
+# Route 3: Select One Image for Emotion Detection
+@app.route('home/detect_emotion/<int:image_id>', methods=['GET'])
+def detectemotion(image_id):
+    # Retrieve the image from PostgreSQL
+    with engine.connect() as connection:
+        query =select([images_table.c.image]).where(images_table.c.image_id == image_id)
+        result = connection.execute(query).fetchone
+
+        if not result :
+            return jsonify({'error': 'image not found'}), 404
+        
+    image_bytes= result['image']
+
+    # Detect emotion using the retrieved image
+    emotions = detect_emotion(image_bytes)
+
+    # Delete the image after emotion detection
+    delete_image(image_id)
+
+    return jsonify(emotions)
 
 
 @app.route('home/login', method = ['GET' , 'POST'])
