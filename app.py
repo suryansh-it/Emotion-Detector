@@ -5,13 +5,25 @@ import cv2
 from fer import FER
 from datetime import datetime
 from sqlalchemy.sql import select
-from models import engine, images_table
+from models import db , Images
+from flask_migrate import Migrate
+from flask_wtf import FlaskForm
+from wtforms import StringField , PasswordField , SubmitField
+from wtforms.validators import InputRequired , Length, ValidationError
 
 def create_app():
     app = Flask(__name__)
 
-app = create_app()
+    db.init_app(app)
 
+    with app.app_context():
+        db.create_all()
+    
+    return app
+
+
+app = create_app()
+migrate = Migrate(app,db)
 # Initialize FER emotion detector
 emotion_detector = FER()
 
@@ -118,6 +130,7 @@ def detectemotion(image_id):
 
 @app.route('home/login', method = ['GET' , 'POST'])
 def login():
+
 
 @app.route('home/Signup', method = ['GET' , 'POST'])
 def signup():
