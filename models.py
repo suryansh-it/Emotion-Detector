@@ -1,21 +1,21 @@
-
-from sqlalchemy import create_engine, Table, Column, Integer, LargeBinary, MetaData, DateTime
-from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.postgresql import JSON
+from datetime import datetime, timezone
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Database Configuration
-DATABASE_URL = 'postgresql://username:password@localhost/dbname'
+DATABASE_URL = 'postgresql://postgres:0904@localhost:5432/'
 
-# Create the engine and metadata
-engine = create_engine(DATABASE_URL)
-metadata = MetaData()
+
+
+
+db = SQLAlchemy()
 
 # Define the images table
-images_table = Table(
-    'images', metadata,
-    Column('image_id', Integer, primary_key=True),
-    Column('image', LargeBinary, nullable=False),
-    Column('upload_time', DateTime, default=datetime.utcnow)
-)
+class Images(db.Model):
+    __tablename__ = 'images_table'
 
-# Create the table if it doesn't exist
-metadata.create_all(engine)
+    image_id = db.Column(db.Integer, primary_key=True,autoincrement=True)
+    image = db.Column(db.LargeBinary,   nullable=False)
+    upload_time = db.Column(db.DateTime,  default=lambda: datetime.now(timezone.utc))
+ 
