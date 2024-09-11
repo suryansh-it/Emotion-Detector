@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from io import BytesIO
 import os
 import cv2
+import numpy as np
 from fer import FER
 from datetime import datetime
 from sqlalchemy.sql import select
@@ -24,6 +25,7 @@ def create_app():
 
 app = create_app()
 migrate = Migrate(app,db)
+
 # Initialize FER emotion detector
 emotion_detector = FER()
 
