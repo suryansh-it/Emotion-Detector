@@ -5,12 +5,11 @@ import os
 import cv2
 import numpy as np
 from fer import FER
-from datetime import datetime
 from sqlalchemy.sql import select
-from models import db , ImagesData,User
+from models import db , ImagesData,User , EmotionHistory
 from flask_migrate import Migrate
 import base64
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 from form import Signupform, LoginForm
 
@@ -133,6 +132,7 @@ def preview():
 
 # Route 3: Select One Image for Emotion Detection
 @app.route('/detect_emotion/<int:image_id>', methods=['GET'])
+@login_required
 def detectemotion(image_id):
     image = ImagesData.query.get(image_id)
 
@@ -144,6 +144,10 @@ def detectemotion(image_id):
 
  # Store the emotion data in the database as JSON string
     image.emotion_data = json.dumps(emotions)
+
+    # Save the emotion history
+    new_record = EmotionHistory(emotions=emotions, user_id=current_user.id)
+    db.session.add(new_record)
     db.session.commit()
 
     # Delete the image after emotion detection
@@ -184,8 +188,13 @@ def signup():
 
 
 
-# @app.route('home/history' , method = ['GET'])
-# def history(): 
+@app.route('home/history' , methods = ['GET'])
+@login_required
+def history(): 
+    # Query to get emotion history for the current user
+    emotion_history = EmotionHistory.query.filter_by(user_id =current_user.id).all()
+    return render_template('history.html', emotion_history=emotion_history)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
