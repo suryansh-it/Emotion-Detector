@@ -55,45 +55,51 @@ def detect_emotion(image_data):
     return emotions
 
 
-# Store image temporarily in PostgreSQL
-def store_image(image_bytes):
-    if request.method == 'POST':
-        data =request.get_json
+# # Store image temporarily in PostgreSQL
+# def store_image(image_data):
+#     if request.method == 'POST':
+#         data =request.get_json
 
 
-    with engine.connect() as connection:
-        insert_query = images_table.insert().values(image=image_bytes, upload_time=datetime.now())
-        result = connection.execute(insert_query)
-        return result.inserted_primary_key[0]
+#     with engine.connect() as connection:
+#         insert_query = images_table.insert().values(image=image_bytes, upload_time=datetime.now())
+#         result = connection.execute(insert_query)
+#         return result.inserted_primary_key[0]
     
 
-# Retrieve image by image_id
-def retrieve_images(image_ids):
-    with engine.connect() as connection:
-        query = select([images_table.c.image, images_table.c.image_id]).where(images_table.c.image_id.in_(image_ids))
-        result = connection.execute(query).fetchall()
-        return [{'image_id': row['image_id'], 'image': row['image']} for row in result]
+# # Retrieve image by image_id
+# def retrieve_images(image_ids):
+#     with engine.connect() as connection:
+#         query = select([images_table.c.image, images_table.c.image_id]).where(images_table.c.image_id.in_(image_ids))
+#         result = connection.execute(query).fetchall()
+#         return [{'image_id': row['image_id'], 'image': row['image']} for row in result]
     
 
-#delete imag after use
-def delete_image (image_id):
-    with engine.connect() as connection:
-        delete_query = images_table.delete().where(images_table.c.image_id == image_id)
-        connection.execute(delete_query)
+# #delete imag after use
+# def delete_image (image_id):
+#     with engine.connect() as connection:
+#         delete_query = images_table.delete().where(images_table.c.image_id == image_id)
+#         connection.execute(delete_query)
 
 
 
 
 # Route 1: Capture Images
-@app.route('/home/capture', method= ['GET', 'POST'])
+@app.route('/capture', method= ['GET', 'POST'])
 def capture():
-    file = request.files['file']
-    image_bytes = file.read()   #read img as bytes
+    data = request.get_json()
+    # Expect image data to be base64 encoded
+    image_data = data.get('image_data')
 
+    if not image_data:
+        return jsonify({'error': 'No image data provided'}), 400
 
-    #store img 
-    image_id = store_image(image_bytes)
-    return jsonify({'image_id': image_id})
+    # Store image in the database
+    new_image = ImagesData(
+        image_data=base64.b64decode(image_data)
+    )
+    db.session.add(new_image)
+    db.session.commit()
 
 
 # Route 2: Preview 3 Captured Images
