@@ -101,24 +101,19 @@ def capture():
     db.session.add(new_image)
     db.session.commit()
 
+    return jsonify({'image_id': new_image.id}), 201
+
 
 # Route 2: Preview 3 Captured Images
-@app.route('/home/preview_images', method= ['GET', 'POST'])
+@app.route('/preview_images', method= ['GET', 'POST'])
 def preview():
 # Query to get the last 3 images stored in the database
-    with engine.connect() as connection:
-        query = select([images_table.c.image_id]).order_by(images_table.c.upload_time.desc()).limit(3)
-        result = connection.execute(query).fetchall()
-        image_ids = [row['image_id'] for row in result]
+    images = ImagesData.query.order_by(ImagesData.upload_time.desc()).limit(3).all()
 
+    # Convert images to JSON (excluding binary data)
+    images_json = [image.to_dict() for image in images]
 
-     # Retrieve the 3 images using their IDs
-    images = retrieve_images(image_ids)
-
-     # Convert the image data to something the frontend can display (e.g., Base64)
-    preview_images = [{'image_id': img['image_id'], 'image': img['image']} for img in images]
-
-    return jsonify(preview_images)
+    return jsonify(images_json), 200
 
 
 # Route 3: Select One Image for Emotion Detection
