@@ -8,6 +8,7 @@ from datetime import datetime
 from sqlalchemy.sql import select
 from models import db , Images
 from flask_migrate import Migrate
+import base64
 from flask_wtf import FlaskForm
 from wtforms import StringField , PasswordField , SubmitField
 from wtforms.validators import InputRequired , Length, ValidationError
@@ -15,6 +16,8 @@ from wtforms.validators import InputRequired , Length, ValidationError
 def create_app():
     app = Flask(__name__)
 
+
+    app.config['SQLALCHEMY_DATABASE_URI']  = 'postgresql://postgres:0904@localhost:5432/'
     db.init_app(app)
 
     with app.app_context():
@@ -38,7 +41,7 @@ def home() :
 # Function to detect emotion using FER and OpenCV
 def detect_emotion(image_bytes):
     # Convert the image bytes to a NumPy array
-    image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
+    image = cv2.imdecode(np.frombuffer(base64.b64decode(image_data), np.uint8), cv2.IMREAD_COLOR)
     
     # Detect emotions on the image using FER
     emotion_results = emotion_detector.detect_emotions(image)
@@ -54,6 +57,10 @@ def detect_emotion(image_bytes):
 
 # Store image temporarily in PostgreSQL
 def store_image(image_bytes):
+    if request.method == 'POST':
+        data =request.get_json
+
+
     with engine.connect() as connection:
         insert_query = images_table.insert().values(image=image_bytes, upload_time=datetime.now())
         result = connection.execute(insert_query)

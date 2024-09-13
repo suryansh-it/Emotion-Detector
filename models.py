@@ -5,7 +5,7 @@ import json
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Database Configuration
-DATABASE_URL = 'postgresql://postgres:0904@localhost:5432/'
+
 
 
 
@@ -13,7 +13,7 @@ DATABASE_URL = 'postgresql://postgres:0904@localhost:5432/'
 db = SQLAlchemy()
 
 # Define the images table
-class Images(db.Model):
+class ImagesData(db.Model):
     __tablename__ = 'images_table'
 
     image_id = db.Column(db.Integer, primary_key=True,autoincrement=True)
