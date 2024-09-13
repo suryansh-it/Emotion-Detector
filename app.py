@@ -13,6 +13,8 @@ import base64
 from flask_wtf import FlaskForm
 from wtforms import StringField , PasswordField , SubmitField
 from wtforms.validators import InputRequired , Length, ValidationError
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_bcrypt import Bcrypt
 
 def create_app():
     app = Flask(__name__)
@@ -29,6 +31,10 @@ def create_app():
 
 app = create_app()
 migrate = Migrate(app,db)
+
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+bcrypt = Bcrypt(app)
 
 # Initialize FER emotion detector
 emotion_detector = FER()
@@ -86,6 +92,12 @@ def delete_image ():
 #         delete_query = images_table.delete().where(images_table.c.image_id == image_id)
 #         connection.execute(delete_query)
 
+
+
+# User loader function
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 
 
@@ -149,6 +161,10 @@ def detectemotion(image_id):
 
 # @app.route('home/Signup', method = ['GET' , 'POST'])
 # def signup():
+
+
+
+
 
 # @app.route('home/history' , method = ['GET'])
 # def history(): 
