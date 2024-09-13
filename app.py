@@ -76,12 +76,12 @@ def detect_emotion(image_data):
 #         return [{'image_id': row['image_id'], 'image': row['image']} for row in result]
     
 
-#delete imag after use
-# def delete_image (image_id):
-#     image = ImagesData.query.get_or_404(image_id)
-#     db.session.delete(image)
-#     db.session.commit()
-#     return jsonify({'message': 'project post deleted'})
+delete imag after use
+def delete_image (image_id):
+    image = ImagesData.query.get_or_404(image_id)
+    db.session.delete(image)
+    db.session.commit()
+    return jsonify({'message': 'project post deleted'})
 #     with engine.connect() as connection:
 #         delete_query = images_table.delete().where(images_table.c.image_id == image_id)
 #         connection.execute(delete_query)
