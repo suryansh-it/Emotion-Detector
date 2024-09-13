@@ -152,7 +152,7 @@ def detectemotion(image_id):
     return jsonify(emotions), 200
 
 
-@app.route('home/login', method = ['GET' , 'POST'])
+@app.route('/home/login', methods = ['GET' , 'POST'])
 def login():
     form= LoginForm()
     if form.validate_on_submit():
@@ -169,7 +169,7 @@ def login():
 
 
 
-@app.route('home/Signup', method = ['GET' , 'POST'])
+@app.route('/home/Signup', methods = ['GET' , 'POST'])
 def signup():
     form = Signupform()
     if form.validate_on_submit():
