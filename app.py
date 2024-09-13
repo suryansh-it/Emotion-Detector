@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+import json
 from io import BytesIO
 import os
 import cv2
@@ -75,8 +76,12 @@ def detect_emotion(image_data):
 #         return [{'image_id': row['image_id'], 'image': row['image']} for row in result]
     
 
-# #delete imag after use
+#delete imag after use
 # def delete_image (image_id):
+#     image = ImagesData.query.get_or_404(image_id)
+#     db.session.delete(image)
+#     db.session.commit()
+#     return jsonify({'message': 'project post deleted'})
 #     with engine.connect() as connection:
 #         delete_query = images_table.delete().where(images_table.c.image_id == image_id)
 #         connection.execute(delete_query)
@@ -117,25 +122,24 @@ def preview():
 
 
 # Route 3: Select One Image for Emotion Detection
-@app.route('home/detect_emotion/<int:image_id>', methods=['GET'])
+@app.route('/detect_emotion/<int:image_id>', methods=['GET'])
 def detectemotion(image_id):
-    # Retrieve the image from PostgreSQL
-    with engine.connect() as connection:
-        query =select([images_table.c.image]).where(images_table.c.image_id == image_id)
-        result = connection.execute(query).fetchone
+    image = ImagesData.query.get(image_id)
 
-        if not result :
-            return jsonify({'error': 'image not found'}), 404
-        
-    image_bytes= result['image']
+    if not image:
+        return jsonify({'error': 'Image not found'}), 404
+    
+    # Detect emotion from the stored image
+    emotions = detect_emotion(base64.b64encode(image.image_data).decode('utf-8'))
 
-    # Detect emotion using the retrieved image
-    emotions = detect_emotion(image_bytes)
+ # Store the emotion data in the database as JSON string
+    image.emotion_data = json.dumps(emotions)
+    db.session.commit()
 
     # Delete the image after emotion detection
     delete_image(image_id)
 
-    return jsonify(emotions)
+    return jsonify(emotions), 200
 
 
 @app.route('home/login', method = ['GET' , 'POST'])
