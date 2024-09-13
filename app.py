@@ -142,8 +142,8 @@ def detectemotion(image_id):
     return jsonify(emotions), 200
 
 
-@app.route('home/login', method = ['GET' , 'POST'])
-def login():
+# @app.route('home/login', method = ['GET' , 'POST'])
+# def login():
 
 
 
