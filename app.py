@@ -6,7 +6,7 @@ import numpy as np
 from fer import FER
 from datetime import datetime
 from sqlalchemy.sql import select
-from models import db , Images
+from models import db , ImagesData
 from flask_migrate import Migrate
 import base64
 from flask_wtf import FlaskForm
@@ -39,7 +39,7 @@ def home() :
 
 
 # Function to detect emotion using FER and OpenCV
-def detect_emotion(image_bytes):
+def detect_emotion(image_data):
     # Convert the image bytes to a NumPy array
     image = cv2.imdecode(np.frombuffer(base64.b64decode(image_data), np.uint8), cv2.IMREAD_COLOR)
     
