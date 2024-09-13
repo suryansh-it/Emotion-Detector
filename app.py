@@ -7,12 +7,9 @@ import numpy as np
 from fer import FER
 from datetime import datetime
 from sqlalchemy.sql import select
-from models import db , ImagesData
+from models import db , ImagesData,User
 from flask_migrate import Migrate
 import base64
-from flask_wtf import FlaskForm
-from wtforms import StringField , PasswordField , SubmitField
-from wtforms.validators import InputRequired , Length, ValidationError
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 
