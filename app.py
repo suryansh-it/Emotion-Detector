@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, flash, url_for, redirect
 import json
 from io import BytesIO
 import os
@@ -12,6 +12,7 @@ from flask_migrate import Migrate
 import base64
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
+from form import Signupform, LoginForm
 
 def create_app():
     app = Flask(__name__)
@@ -151,13 +152,35 @@ def detectemotion(image_id):
     return jsonify(emotions), 200
 
 
-# @app.route('home/login', method = ['GET' , 'POST'])
-# def login():
+@app.route('home/login', method = ['GET' , 'POST'])
+def login():
+    form= LoginForm()
+    if form.validate_on_submit():
+        user= User.query.filter_by(email = form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user)
+            flash('Login successful!', 'success')
+            return redirect(url_for('home'))
+        
+        else:
+            flash('Login failed. Check your email and/or password', 'danger')
+    return render_template('login.html', title='Login', form=form)
 
 
 
-# @app.route('home/Signup', method = ['GET' , 'POST'])
-# def signup():
+
+@app.route('home/Signup', method = ['GET' , 'POST'])
+def signup():
+    form = Signupform()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username = form.username.data, email= form.email.data, password= hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash('Your account has been created!', 'success')
+        return redirect(url_for('login'))
+    return render_template('signup.html', title='Sign Up', form=form)
+
 
 
 
