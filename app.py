@@ -18,7 +18,7 @@ def create_app():
     app = Flask(__name__)
 
 
-    app.config['SQLALCHEMY_DATABASE_URI']  = 'postgresql://postgres:0904@localhost:5432/'
+    app.config['SQLALCHEMY_DATABASE_URI']  = 'postgresql://postgres:0904@localhost:5432/emotion_det'
     db.init_app(app)
 
     with app.app_context():
@@ -77,7 +77,7 @@ def detect_emotion(image_data):
     
 
 # delete imag after use
-def delete_image (image_id):
+def delete_image ():
     images = ImagesData.query.order_by(ImagesData.upload_time.desc()).limit(3).all()
     db.session.delete(images)
     db.session.commit()
@@ -90,7 +90,7 @@ def delete_image (image_id):
 
 
 # Route 1: Capture Images
-@app.route('/capture', method= ['GET', 'POST'])
+@app.route('/capture', methods= ['GET', 'POST'])
 def capture():
     data = request.get_json()
     # Expect image data to be base64 encoded
@@ -110,7 +110,7 @@ def capture():
 
 
 # Route 2: Preview 3 Captured Images
-@app.route('/preview_images', method= ['GET', 'POST'])
+@app.route('/preview_images', methods= ['GET', 'POST'])
 def preview():
 # Query to get the last 3 images stored in the database
     images = ImagesData.query.order_by(ImagesData.upload_time.desc()).limit(3).all()
@@ -142,15 +142,15 @@ def detectemotion(image_id):
     return jsonify(emotions), 200
 
 
-@app.route('home/login', method = ['GET' , 'POST'])
-def login():
+# @app.route('home/login', method = ['GET' , 'POST'])
+# def login():
 
 
-@app.route('home/Signup', method = ['GET' , 'POST'])
-def signup():
+# @app.route('home/Signup', method = ['GET' , 'POST'])
+# def signup():
 
-@app.route('home/history' , method = ['GET'])
-def history(): 
+# @app.route('home/history' , method = ['GET'])
+# def history(): 
 
 if __name__ == '__main__':
     app.run(debug=True)
