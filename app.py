@@ -145,8 +145,12 @@ def detectemotion(image_id):
  # Store the emotion data in the database as JSON string
     image.emotion_data = json.dumps(emotions)
 
-    # Save the emotion history
-    new_record = EmotionHistory(emotions=emotions, user_id=current_user.id)
+    
+    # Save the emotion history in JSON format
+    new_record = EmotionHistory(
+        emotions=emotions,
+        user_id=current_user.id
+    )
     db.session.add(new_record)
     db.session.commit()
 
