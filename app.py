@@ -17,7 +17,7 @@ from wtforms.validators import InputRequired , Length, ValidationError
 def create_app():
     app = Flask(__name__)
 
-
+    app.config['SECRET_KEY'] = 'your_secret_key'
     app.config['SQLALCHEMY_DATABASE_URI']  = 'postgresql://postgres:0904@localhost:5432/emotion_det'
     db.init_app(app)
 
@@ -142,8 +142,9 @@ def detectemotion(image_id):
     return jsonify(emotions), 200
 
 
-# @app.route('home/login', method = ['GET' , 'POST'])
-# def login():
+@app.route('home/login', method = ['GET' , 'POST'])
+def login():
+
 
 
 # @app.route('home/Signup', method = ['GET' , 'POST'])
