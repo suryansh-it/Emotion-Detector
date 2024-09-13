@@ -184,8 +184,6 @@ def signup():
 
 
 
-
-
 # @app.route('home/history' , method = ['GET'])
 # def history(): 
 

@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import JSON
 from datetime import datetime, timezone
 import json
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from flask_login import UserMixin
 # Database Configuration
 
 
@@ -29,3 +29,23 @@ class ImagesData(db.Model):
             'emotion_data': json.loads(self.emotion_data) if self.emotion_data else None
         }
  
+
+
+
+class User(db.Model, UserMixin):
+    __tablename__ = 'user_table'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(60), nullable=False)
+
+    # Add a relationship to EmotionHistory
+    emotions = db.relationship('EmotionHistory', backref='user', lazy=True)
+
+
+class EmotionHistory(db.Model):
+    __tablename__ = 'history_table'
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
+    emotions = db.Column(db.JSON, nullable=False)  # Store emotions as JSON
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
