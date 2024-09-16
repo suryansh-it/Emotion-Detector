@@ -1,8 +1,28 @@
-{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block content
-%}
-<div class="text-center">
-  <h1>Welcome to Emotion Detector</h1>
-  <p>Capture an image to detect emotions.</p>
-  <a href="{{ url_for('capture') }}" class="btn btn-primary">Capture Image</a>
-</div>
-{% endblock %}
+<!-- {% extends "base.html" %} {% block content %}
+<div class="container">
+  <h1 class="text-center">Welcome to Emotion Detector</h1>
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <form id="capture-form">
+        <div class="mb-3">
+          <label for="imageCapture" class="form-label">Capture Image</label>
+          <input
+            class="form-control"
+            type="file"
+            id="imageCapture"
+            accept="image/*"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Capture Image</button>
+      </form>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <h3>Preview Last 3 Captured Images</h3>
+      <div id="imagePreview" class="row">
+        <!-- Image previews will be injected here -->
+      </div>
+    </div>
+  </div>
+</div> -->
