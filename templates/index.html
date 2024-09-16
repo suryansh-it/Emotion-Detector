@@ -1,28 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Emotion Detector</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='styles.css') }}"
-    />
-  </head>
-  <body>
-    <h1>Emotion Detector</h1>
-    <div>
-      <video id="video" width="640" height="480" autoplay></video>
-      <button id="capture">Capture</button>
-    </div>
-    <canvas id="canvas" width="640" height="480"></canvas>
-    <form id="uploadForm" enctype="multipart/form-data">
-      <input type="file" id="fileInput" />
-      <button type="submit">Detect Emotion</button>
-    </form>
-    <div id="result"></div>
-    <!-- Content Block -->
-    <div class="container mt-5">{% block content %} {% endblock %}</div>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-  </body>
-</html>
+{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block content
+%}
+<div class="text-center">
+  <h1>Welcome to Emotion Detector</h1>
+  <p>Capture an image to detect emotions.</p>
+  <a href="{{ url_for('capture') }}" class="btn btn-primary">Capture Image</a>
+</div>
+{% endblock %}
