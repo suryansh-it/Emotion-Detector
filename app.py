@@ -12,6 +12,7 @@ import base64
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 from form import Signupform, LoginForm
+from capture_image import capture_image 
 
 def create_app():
     app = Flask(__name__)
