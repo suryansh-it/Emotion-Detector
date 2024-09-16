@@ -1,2 +1,24 @@
-{% extends "index.html" %} {% block title %}History{% endblock %} {% block
-content %} {% endblock %}
+{% extends 'base.html' %} {% block title %}Signup{% endblock %} {% block content
+%}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <h2>Sign Up</h2>
+    <form method="POST" action="{{ url_for('signup') }}">
+      {{ form.hidden_tag() }}
+      <div class="form-group">
+        {{ form.username.label(class="form-label") }} {{
+        form.username(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.email.label(class="form-label") }} {{
+        form.email(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.password.label(class="form-label") }} {{
+        form.password(class="form-control") }}
+      </div>
+      <button type="submit" class="btn btn-primary mt-3">Sign Up</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
