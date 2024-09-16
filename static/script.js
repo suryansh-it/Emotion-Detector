@@ -1,30 +1,48 @@
-// Handle image capture and preview
-$('#capture-form').on('submit', function(event) {
-    event.preventDefault();
-    const fileInput = document.getElementById('imageCapture');
-    const file = fileInput.files[0];
+// Access the webcam video stream
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const context = canvas.getContext('2d');
+const capturedImage = document.getElementById('captured-image');
+const captureBtn = document.getElementById('capture-btn');
 
-    if (file) {
-        const reader = new FileReader();
-        reader.onloadend = function() {
-            const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
+// Start video stream
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function(stream) {
+        video.srcObject = stream;
+    })
+    .catch(function(err) {
+        console.log("Error accessing webcam: " + err);
+    });
 
-            $.ajax({
-                url: "/capture",
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify({ image_data: base64String }),
-                success: function(response) {
-                    alert('Image captured and saved successfully!');
-                    previewImages();
-                },
-                error: function(error) {
-                    alert('Error capturing image');
-                }
-            });
-        };
-        reader.readAsDataURL(file);
-    }
+// Capture the image when the button is clicked
+captureBtn.addEventListener('click', function() {
+    // Draw the video frame on the canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert the canvas to a data URL (base64)
+    const imageData = canvas.toDataURL('image/jpeg');
+
+    // Display the captured image in the img tag
+    capturedImage.src = imageData;
+    capturedImage.style.display = 'block';
+
+    // Send the captured image to the server
+    fetch('/capture', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ image_data: imageData.split(',')[1] })  // Send base64 without the data URI prefix
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.image_id) {
+            alert('Image captured and saved successfully!');
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => console.error('Error:', error));
 });
 
 // Preview last 3 images

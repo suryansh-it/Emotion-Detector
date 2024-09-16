@@ -3,18 +3,26 @@
   <h1 class="text-center">Welcome to Emotion Detector</h1>
   <div class="row">
     <div class="col-md-6 offset-md-3">
-      <form id="capture-form">
-        <div class="mb-3">
-          <label for="imageCapture" class="form-label">Capture Image</label>
-          <input
-            class="form-control"
-            type="file"
-            id="imageCapture"
-            accept="image/*"
-          />
+      <h1>Capture Image</h1>
+      <div class="row">
+        <div class="col-md-6">
+          <!-- Webcam video stream -->
+          <video id="video" width="100%" autoplay></video>
+          <button id="capture-btn" class="btn btn-primary mt-3">
+            <a href="{{ url_for('capture') }}">Capture Image</a>
+          </button>
         </div>
-        <button type="submit" class="btn btn-primary">Capture Image</button>
-      </form>
+        <div class="col-md-6">
+          <!-- Captured image will be displayed here -->
+          <canvas
+            id="canvas"
+            width="640"
+            height="480"
+            style="display: none"
+          ></canvas>
+          <img id="captured-image" class="img-fluid" alt="Captured Image" />
+        </div>
+      </div>
     </div>
   </div>
   <div class="row mt-4">
