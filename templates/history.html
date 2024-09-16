@@ -12,4 +12,7 @@ block content %}
 </ul>
 {% else %}
 <p>No emotion history available.</p>
-{% endif %} {% endblock %}
+{% endif %} {% block script %}
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+{% endblock %}{% endblock %}

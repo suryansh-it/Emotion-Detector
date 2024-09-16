@@ -1,4 +1,4 @@
-<!-- {% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% block content %}
 <div class="container">
   <h1 class="text-center">Welcome to Emotion Detector</h1>
   <div class="row">
@@ -25,4 +25,8 @@
       </div>
     </div>
   </div>
-</div> -->
+</div>
+{% block script %}
+
+<script src="{{ url_for('static', filename='js/edit_project.js') }}"></script>
+{% endblock %}{% endblock %}
