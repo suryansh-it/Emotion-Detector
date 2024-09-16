@@ -38,7 +38,7 @@ emotion_detector = FER()
 
 @app.route('/')
 def home() :
-    render_template('index.html')
+    return render_template('index.html')
 
 
 
@@ -101,21 +101,20 @@ def load_user(user_id):
 # Route 1: Capture Images
 @app.route('/capture', methods= ['GET', 'POST'])
 def capture():
-    data = request.get_json()
-    # Expect image data to be base64 encoded
-    image_data = data.get('image_data')
+    try:
+        # Capture the image using the capture_image function
+        image_data = capture_image()
 
-    if not image_data:
-        return jsonify({'error': 'No image data provided'}), 400
+        # Save the captured image in the database
+        new_image = ImagesData(image_data=image_data, user_id=current_user.id)
+        db.session.add(new_image)
+        db.session.commit()
 
-    # Store image in the database
-    new_image = ImagesData(
-        image_data=base64.b64decode(image_data)
-    )
-    db.session.add(new_image)
-    db.session.commit()
+        # Return success response
+        return jsonify({'message': 'Image captured successfully', 'image_id': new_image.id}), 201
 
-    return jsonify({'image_id': new_image.id}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 # Route 2: Preview 3 Captured Images
@@ -192,7 +191,7 @@ def signup():
 
 
 
-@app.route('home/history' , methods = ['GET'])
+@app.route('/home/history' , methods = ['GET'])
 @login_required
 def history(): 
     # Query to get emotion history for the current user
