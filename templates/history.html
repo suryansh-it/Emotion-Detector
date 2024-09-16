@@ -1,2 +1,15 @@
-{% extends "index.html" %} {% block title %}History{% endblock %} {% block
-content %} {% endblock %}
+{% extends 'base.html' %} {% block title %}Emotion History{% endblock %} {%
+block content %}
+<h2>Emotion History</h2>
+{% if emotion_history %}
+<ul class="list-group">
+  {% for record in emotion_history %}
+  <li class="list-group-item">
+    {{ record.timestamp }}:
+    <strong>Emotions:</strong> {{ record.emotions }}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No emotion history available.</p>
+{% endif %} {% endblock %}
