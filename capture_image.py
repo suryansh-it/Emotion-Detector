@@ -24,3 +24,4 @@ def capture_image():
     cap.release()
 
     return buffer.tobytes()  # Return the raw bytes for storage
+
