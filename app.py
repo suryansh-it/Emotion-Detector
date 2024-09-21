@@ -104,7 +104,8 @@ def load_user(user_id):
 def capture():
     try:
         # Capture the image using the capture_image function
-        image_data = capture_image()
+        image_data = image_data = request.json.get('image_data')  # Get the base64 image from frontend
+
 
         # Save the captured image in the database
         new_image = ImagesData(image_data=image_data, user_id=current_user.id)
