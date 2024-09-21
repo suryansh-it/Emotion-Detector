@@ -120,7 +120,7 @@ def capture():
 
 
 # Route 2: Preview 3 Captured Images
-@app.route('/preview_images', methods= ['GET', 'POST'])
+@app.route('/preview_images', methods= ['GET'])
 def preview():
 # Query to get the last 3 images stored in the database
     images = ImagesData.query.order_by(ImagesData.upload_time.desc()).limit(3).all()

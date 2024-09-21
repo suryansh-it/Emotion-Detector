@@ -66,7 +66,7 @@ captureBtn.addEventListener('click', function () {
             previewImage.src = '';  // Clear existing image
             previewImage.style.display = 'none';  // Hide if no image available
         }
-
+    
         // Add the new images to the preview (up to 3)
         images.forEach((image, index) => {
             if (index < 3) {
@@ -76,7 +76,4 @@ captureBtn.addEventListener('click', function () {
             }
         });
     }
-
-    // Initially fetch preview images on page load
-    window.onload = fetchPreviewImages;
-
+    
