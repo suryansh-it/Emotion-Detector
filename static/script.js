@@ -12,38 +12,39 @@
         });
 
     // Capture the image when the button is clicked
-    captureBtn.addEventListener('click', function () {
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
+captureBtn.addEventListener('click', function () {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
 
-        // Draw the video frame on the canvas
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // Draw the video frame on the canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // Convert the canvas to a data URL (base64)
-        const imageData = canvas.toDataURL('image/jpeg').split(',')[1];  // Send base64 without the data URI prefix
+    // Convert the canvas to a data URL (base64)
+    const imageData = canvas.toDataURL('image/jpeg').split(',')[1];  // Send base64 without the data URI prefix
 
-        // Send the captured image to the server
-        fetch('/capture', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ image_data: imageData })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    alert('Image captured and saved successfully!');
-                    // After capturing the image, update the preview with the last 3 images
-                    fetchPreviewImages();
-                } else {
-                    alert('Error: ' + data.error);
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    });
+    // Send the captured image to the server
+    fetch('/capture', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ image_data: imageData })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            alert('Image captured and saved successfully!');
+            // After capturing the image, update the preview with the last 3 images
+            fetchPreviewImages();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
 
     // Fetch and update the preview with the last 3 images
     function fetchPreviewImages() {
