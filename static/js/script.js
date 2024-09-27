@@ -25,7 +25,7 @@ captureBtn.addEventListener('click', function () {
     const image_data = canvas.toDataURL('image/jpeg').split(',')[1];  // Send base64 without the data URI prefix
 
     // Send the captured image to the server
-    fetch('/capture', {
+    fetch('http://127.0.0.1:5000/capture', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

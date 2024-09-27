@@ -25,7 +25,7 @@ class ImagesData(db.Model):
     def to_dict(self):
         """Convert image model to dictionary, omitting binary data."""
         return {
-            'id': self.id,
+            'id': self.image_id,
             'upload_time': self.upload_time.isoformat(),
             'emotion_data': json.loads(self.emotion_data) if self.emotion_data else None
         }

@@ -111,12 +111,12 @@ def capture():
             return jsonify({'error': 'User not authenticated'}), 401
 
         # Save the captured image in the database
-        new_image = ImagesData(image=image_data.encode('utf-8'), user_id=current_user.id)
+        new_image = ImagesData(image_data=image_data.encode('utf-8'), user_id=current_user.id)
         db.session.add(new_image)
         db.session.commit()
 
         # Return success response
-        return jsonify({'message': 'Image captured successfully', 'image_id': new_image.id}), 201
+        return jsonify({'message': 'Image captured successfully', 'image_id': new_image.image_id}), 201
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
