@@ -124,13 +124,15 @@ def capture():
 
 
 # Route 2: Preview 3 Captured Images
-@app.route('/preview_images', methods= ['GET'])
+@app.route('/preview', methods=['GET'])
+@login_required
 def preview():
-# Query to get the last 3 images stored in the database
-    images = ImagesData.query.order_by(ImagesData.upload_time.desc()).limit(3).all()
+    # Get the last 3 images for the currently logged-in user
+    images = ImagesData.query.filter_by(user_id=current_user.id)\
+        .order_by(ImagesData.upload_time.desc()).limit(3).all()
 
     # Convert images to JSON (excluding binary data)
-    images_json = [image.to_dict() for image in images]
+    images_json = [{"image_data": image.image_data} for image in images]
 
     return jsonify(images_json), 200
 

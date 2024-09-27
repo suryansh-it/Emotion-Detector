@@ -48,11 +48,12 @@ captureBtn.addEventListener('click', function () {
 
     // Fetch and update the preview with the last 3 images
     function fetchPreviewImages() {
-        fetch('/preview_images', {
+        fetch('/preview', {
             method: 'GET'
         })
             .then(response => response.json())
             .then(data => {
+                console.log("Preview Data:", data);
                 updatePreview(data);
             })
             .catch(error => console.error('Error fetching preview images:', error));
@@ -69,11 +70,13 @@ captureBtn.addEventListener('click', function () {
     
         // Add the new images to the preview (up to 3)
         images.forEach((image, index) => {
-            if (index < 3) {
+            if (index < 3 && image.image_data) {  // Ensure image_data exists
                 const previewImage = document.getElementById(`preview-${index + 1}`);
-                previewImage.src = `data:image/jpeg;base64,${image.image_data}`;  // Assuming image data is returned as base64
+                previewImage.src = `data:image/jpeg;base64,${image.image_data}?${new Date().getTime()}`;
+                  // Assuming image data is returned as base64
                 previewImage.style.display = 'block';  // Show the image
             }
         });
     }
+    
     

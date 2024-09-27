@@ -17,18 +17,20 @@ class ImagesData(db.Model):
     __tablename__ = 'images_table'
 
     image_id = db.Column(db.Integer, primary_key=True,autoincrement=True)
-    image_data = db.Column(db.LargeBinary,   nullable=False)
+    image_data = db.Column(db.Text,   nullable=False)
     upload_time = db.Column(db.DateTime,  default=lambda: datetime.now(timezone.utc))
     emotion_data = db.Column(db.String, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user_table.id'), nullable=False)  # ForeignKey to the User model
 
     def to_dict(self):
-        """Convert image model to dictionary, omitting binary data."""
+        """Convert image model to dictionary, including binary data as base64."""
         return {
             'id': self.image_id,
             'upload_time': self.upload_time.isoformat(),
+            'image_data': self.image_data,  # Base64 encoded image data
             'emotion_data': json.loads(self.emotion_data) if self.emotion_data else None
         }
+
  
 
 
