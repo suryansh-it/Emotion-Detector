@@ -12,7 +12,7 @@ import base64
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 from form import Signupform, LoginForm
-from capture_image import capture_image 
+from capture_image import *
 
 def create_app():
     app = Flask(__name__)
@@ -133,7 +133,7 @@ def preview():
 
 # Route 3: Select One Image for Emotion Detection
 @app.route('/detect_emotion/<int:image_id>', methods=['GET'])
-@login_required
+# @login_required
 def detectemotion(image_id):
     image = ImagesData.query.get(image_id)
 
@@ -178,7 +178,7 @@ def login():
 
 
 
-@app.route('/home/Signup', methods = ['GET' , 'POST'])
+@app.route('/home/signup', methods = ['GET' , 'POST'])
 def signup():
     form = Signupform()
     if form.validate_on_submit():
@@ -194,7 +194,7 @@ def signup():
 
 
 @app.route('/home/history' , methods = ['GET'])
-@login_required
+# @login_required
 def history(): 
     # Query to get emotion history for the current user
     emotion_history = EmotionHistory.query.filter_by(user_id =current_user.id).all()
