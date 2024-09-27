@@ -17,9 +17,10 @@ class ImagesData(db.Model):
     __tablename__ = 'images_table'
 
     image_id = db.Column(db.Integer, primary_key=True,autoincrement=True)
-    image = db.Column(db.LargeBinary,   nullable=False)
+    image_data = db.Column(db.LargeBinary,   nullable=False)
     upload_time = db.Column(db.DateTime,  default=lambda: datetime.now(timezone.utc))
     emotion_data = db.Column(db.String, nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user_table.id'), nullable=False)  # ForeignKey to the User model
 
     def to_dict(self):
         """Convert image model to dictionary, omitting binary data."""
@@ -41,6 +42,7 @@ class User(db.Model, UserMixin):
 
     # Add a relationship to EmotionHistory
     emotions = db.relationship('EmotionHistory', backref='user', lazy=True)
+    img_data = db.relationship('ImagesData', backref='images', lazy=True)
 
 
 class EmotionHistory(db.Model):

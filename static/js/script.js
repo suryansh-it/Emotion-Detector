@@ -22,7 +22,7 @@ captureBtn.addEventListener('click', function () {
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     // Convert the canvas to a data URL (base64)
-    const imageData = canvas.toDataURL('image/jpeg').split(',')[1];  // Send base64 without the data URI prefix
+    const image_data = canvas.toDataURL('image/jpeg').split(',')[1];  // Send base64 without the data URI prefix
 
     // Send the captured image to the server
     fetch('/capture', {
@@ -30,7 +30,7 @@ captureBtn.addEventListener('click', function () {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ image_data: imageData })
+        body: JSON.stringify({ image_data: image_data})
     })
     .then(response => response.json())
     .then(data => {

@@ -100,15 +100,18 @@ def load_user(user_id):
 
 
 # Route 1: Capture Images
-@app.route('/capture', methods= ['GET', 'POST'])
+@app.route('/capture', methods=['POST'])
 def capture():
     try:
-        # Capture the image using the capture_image function
-        image_data = image_data = request.json.get('image_data')  # Get the base64 image from frontend
+        # Get image data from the request
+        image_data = request.json['image_data']
 
+        # Check if the current user is logged in
+        if not current_user.is_authenticated:
+            return jsonify({'error': 'User not authenticated'}), 401
 
         # Save the captured image in the database
-        new_image = ImagesData(image_data=image_data, user_id=current_user.id)
+        new_image = ImagesData(image=image_data.encode('utf-8'), user_id=current_user.id)
         db.session.add(new_image)
         db.session.commit()
 
@@ -117,6 +120,7 @@ def capture():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 
 # Route 2: Preview 3 Captured Images
