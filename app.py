@@ -124,17 +124,27 @@ def capture():
 
 
 # Route 2: Preview 3 Captured Images
+
 @app.route('/preview', methods=['GET'])
 @login_required
 def preview():
-    # Get the last 3 images for the currently logged-in user
-    images = ImagesData.query.filter_by(user_id=current_user.id)\
-        .order_by(ImagesData.upload_time.desc()).limit(3).all()
+    try:
+        # Get the last 3 images for the currently logged-in user
+        images = ImagesData.query.filter_by(user_id=current_user.id)\
+            .order_by(ImagesData.upload_time.desc()).limit(3).all()
 
-    # Convert images to JSON (excluding binary data)
-    images_json = [{"image_data": image.image_data} for image in images]
+        images_json = []
+        for image in images:
+            # Convert binary image data to a base64 encoded string
+            base64_image = base64.b64encode(image.image_data).decode('utf-8')
+            images_json.append({"image_data": base64_image})
 
-    return jsonify(images_json), 200
+        return jsonify(images_json), 200
+
+    except Exception as e:
+        print(f"Error in preview route: {e}")
+        return jsonify({'error': 'An error occurred while fetching the preview images.'}), 500
+
 
 
 # Route 3: Select One Image for Emotion Detection
