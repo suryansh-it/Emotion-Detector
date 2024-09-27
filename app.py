@@ -201,5 +201,12 @@ def history():
     return render_template('history.html', emotion_history=emotion_history)
 
 
+@app.route('/home/logout')
+def logout():
+    logout_user()  # This will log out the user
+    flash('You have been logged out!', 'info')  # Optionally flash a message
+    return redirect(url_for('login'))
+
+
 if __name__ == '__main__':
     app.run(debug=True)
