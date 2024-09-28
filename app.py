@@ -147,6 +147,38 @@ def capture():
 
 
 
+# @app.route('/preview', methods=['GET'])
+# @login_required
+# def preview():
+#     try:
+#         # Get the last 3 images for the currently logged-in user
+#         images = ImagesData.query.filter_by(user_id=current_user.id)\
+#             .order_by(ImagesData.upload_time.desc()).limit(3).all()
+
+#         images_json = []
+#         for image in images:
+#             if image.image_data:
+#                 # Ensure image.image_data is bytes, if it's not, convert it
+#                 if isinstance(image.image_data, str):
+#                     # Convert string to bytes (if needed)
+#                     image_data_bytes = image.image_data.encode('utf-8')
+#                 else:
+#                     image_data_bytes = image.image_data
+
+#                 # Convert binary image data to a base64 encoded string
+#                 base64_image = base64.b64encode(image_data_bytes).decode('utf-8')
+#                 images_json.append({"image_data": base64_image})
+#             else:
+#                 return jsonify({'error': 'Image data is missing for one or more images.'}), 500
+
+#         return jsonify(images_json), 200
+
+#     except Exception as e:
+#         print(f"Error in preview route: {e}")
+#         return jsonify({'error': f'An internal error occurred: {str(e)}'}), 500
+
+
+
 @app.route('/preview', methods=['GET'])
 @login_required
 def preview():
@@ -158,16 +190,8 @@ def preview():
         images_json = []
         for image in images:
             if image.image_data:
-                # Ensure image.image_data is bytes, if it's not, convert it
-                if isinstance(image.image_data, str):
-                    # Convert string to bytes (if needed)
-                    image_data_bytes = image.image_data.encode('utf-8')
-                else:
-                    image_data_bytes = image.image_data
-
-                # Convert binary image data to a base64 encoded string
-                base64_image = base64.b64encode(image_data_bytes).decode('utf-8')
-                images_json.append({"image_data": base64_image})
+                # No need to convert image_data to bytes; it's already in Base64 format
+                images_json.append({"image_data": image.image_data})  # Store the Base64 string directly
             else:
                 return jsonify({'error': 'Image data is missing for one or more images.'}), 500
 
