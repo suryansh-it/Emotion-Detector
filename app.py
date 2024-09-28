@@ -125,6 +125,8 @@ def capture():
 
 # Route 2: Preview 3 Captured Images
 
+import base64
+
 @app.route('/preview', methods=['GET'])
 @login_required
 def preview():
@@ -135,15 +137,25 @@ def preview():
 
         images_json = []
         for image in images:
-            # Convert binary image data to a base64 encoded string
-            base64_image = base64.b64encode(image.image_data).decode('utf-8')
-            images_json.append({"image_data": base64_image})
+            if image.image_data:
+                # Ensure image.image_data is bytes, if it's not, convert it
+                if isinstance(image.image_data, str):
+                    # Convert string to bytes (if needed)
+                    image_data_bytes = image.image_data.encode('utf-8')
+                else:
+                    image_data_bytes = image.image_data
+
+                # Convert binary image data to a base64 encoded string
+                base64_image = base64.b64encode(image_data_bytes).decode('utf-8')
+                images_json.append({"image_data": base64_image})
+            else:
+                return jsonify({'error': 'Image data is missing for one or more images.'}), 500
 
         return jsonify(images_json), 200
 
     except Exception as e:
         print(f"Error in preview route: {e}")
-        return jsonify({'error': 'An error occurred while fetching the preview images.'}), 500
+        return jsonify({'error': f'An internal error occurred: {str(e)}'}), 500
 
 
 
