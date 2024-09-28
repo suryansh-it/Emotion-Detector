@@ -133,6 +133,52 @@ captureBtn.addEventListener('click', function () {
 });
 
 // Fetch and update the preview with the last 3 images
+// function fetchPreviewImages() {
+//     fetch('/preview', {
+//         method: 'GET'
+//     })
+//         .then(response => response.json())
+//         .then(data => {
+//             console.log("Preview Data:", data);
+//             updatePreview(data);
+
+//             // After preview, trigger emotion detection
+//             // runEmotionDetection();
+//         })
+//         .catch(error => console.error('Error fetching preview images:', error));
+// }
+
+// // Function to update the preview with the fetched images
+// function updatePreview(images) {
+//     // Clear the existing preview
+//     for (let i = 1; i <= 3; i++) {
+//         const previewImage = document.getElementById(`preview-${i}`);
+//         previewImage.src = '';  // Clear existing image
+//         previewImage.style.display = 'none';  // Hide if no image available
+//     }
+
+//     // Add the new images to the preview (up to 3)
+//     images.forEach((image, index) => {
+//         if (index < 3 && image.image_data) {
+//             const previewImage = document.getElementById(`preview-${index + 1}`);
+            
+//             // Convert Base64 to binary data
+//             const byteCharacters = atob(image.image_data);
+//             const byteNumbers = new Array(byteCharacters.length);
+//             for (let i = 0; i < byteCharacters.length; i++) {
+//                 byteNumbers[i] = byteCharacters.charCodeAt(i);
+//             }
+//             const byteArray = new Uint8Array(byteNumbers);
+//             const blob = new Blob([byteArray], { type: 'image/jpeg' });
+
+//             // Create a temporary URL for the blob and set it as the image src
+//             const blobUrl = URL.createObjectURL(blob);
+//             previewImage.src = blobUrl;
+//             previewImage.style.display = 'block';  // Show the image
+//         }
+//     });
+// }
+
 function fetchPreviewImages() {
     fetch('/preview', {
         method: 'GET'
@@ -141,9 +187,6 @@ function fetchPreviewImages() {
         .then(data => {
             console.log("Preview Data:", data);
             updatePreview(data);
-
-            // After preview, trigger emotion detection
-            // runEmotionDetection();
         })
         .catch(error => console.error('Error fetching preview images:', error));
 }
@@ -162,20 +205,9 @@ function updatePreview(images) {
         if (index < 3 && image.image_data) {
             const previewImage = document.getElementById(`preview-${index + 1}`);
             
-            // Convert Base64 to binary data
-            const byteCharacters = atob(image.image_data);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-            const blob = new Blob([byteArray], { type: 'image/jpeg' });
-
-            // Create a temporary URL for the blob and set it as the image src
-            const blobUrl = URL.createObjectURL(blob);
-            previewImage.src = blobUrl;
+            // Directly set the src to the Base64 string
+            previewImage.src = `data:image/jpeg;base64,${image.image_data}`;
             previewImage.style.display = 'block';  // Show the image
         }
     });
 }
-
