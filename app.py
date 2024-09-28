@@ -100,26 +100,6 @@ def load_user(user_id):
 
 
 # Route 1: Capture Images
-# @app.route('/capture', methods=['POST'])
-# def capture():
-#     try:
-#         # Get image data from the request
-#         image_data = request.json['image_data']
-
-#         # Check if the current user is logged in
-#         if not current_user.is_authenticated:
-#             return jsonify({'error': 'User not authenticated'}), 401
-
-#         # Save the captured image in the database
-#         new_image = ImagesData(image_data=image_data.encode('utf-8'), user_id=current_user.id)
-#         db.session.add(new_image)
-#         db.session.commit()
-
-#         # Return success response
-#         return jsonify({'message': 'Image captured successfully', 'image_id': new_image.image_id}), 201
-
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500
 
 @app.route('/capture', methods=['POST'])
 def capture():
@@ -144,39 +124,6 @@ def capture():
 
 
 # Route 2: Preview 3 Captured Images
-
-
-
-# @app.route('/preview', methods=['GET'])
-# @login_required
-# def preview():
-#     try:
-#         # Get the last 3 images for the currently logged-in user
-#         images = ImagesData.query.filter_by(user_id=current_user.id)\
-#             .order_by(ImagesData.upload_time.desc()).limit(3).all()
-
-#         images_json = []
-#         for image in images:
-#             if image.image_data:
-#                 # Ensure image.image_data is bytes, if it's not, convert it
-#                 if isinstance(image.image_data, str):
-#                     # Convert string to bytes (if needed)
-#                     image_data_bytes = image.image_data.encode('utf-8')
-#                 else:
-#                     image_data_bytes = image.image_data
-
-#                 # Convert binary image data to a base64 encoded string
-#                 base64_image = base64.b64encode(image_data_bytes).decode('utf-8')
-#                 images_json.append({"image_data": base64_image})
-#             else:
-#                 return jsonify({'error': 'Image data is missing for one or more images.'}), 500
-
-#         return jsonify(images_json), 200
-
-#     except Exception as e:
-#         print(f"Error in preview route: {e}")
-#         return jsonify({'error': f'An internal error occurred: {str(e)}'}), 500
-
 
 
 @app.route('/preview', methods=['GET'])
