@@ -171,17 +171,22 @@ let selectedImageId = null;  // This will hold the ID of the selected image
 
 // Function to handle image selection
 function selectImage(index) {
-    // Highlight the selected image (if needed, add some visual effect)
+    // Highlight the selected image (add visual effect like border)
     for (let i = 1; i <= 3; i++) {
         const previewImage = document.getElementById(`preview-${i}`);
         previewImage.style.border = (i === index) ? '2px solid blue' : 'none';
     }
 
-    // Get the selected image ID from the fetched data (you'll need to have this stored when fetching images)
-    selectedImageId = previewImages[index - 1].id;  // Assuming `previewImages` contains the fetched image data
+    // Ensure the fetched preview images are being used correctly
+    if (previewImages && previewImages.length >= index) {
+        selectedImageId = previewImages[index - 1].id;  // Assign the image ID
+        console.log("Selected image ID:", selectedImageId);
 
-    // Show the 'Detect Emotion' button
-    document.getElementById('detect-emotion-btn').style.display = 'block';
+        // Show the 'Detect Emotion' button once an image is selected
+        document.getElementById('detect-emotion-btn').style.display = 'block';
+    } else {
+        console.error("Failed to select image. No previewImages or index is out of bounds.");
+    }
 }
 
 // Function to detect emotion for the selected image
