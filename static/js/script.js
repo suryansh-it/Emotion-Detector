@@ -197,7 +197,7 @@ function detectEmotion() {
     }
 
     // Send request to detect emotion for the selected image
-    fetch(`/detect_emotion/${selectedImageId}`, {
+    fetch(`/detectemotion/${selectedImageId}`, {
         method: 'GET'
     })
     .then(response => response.json())
