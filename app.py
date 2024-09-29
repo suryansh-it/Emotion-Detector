@@ -190,7 +190,7 @@ def detectemotion(image_id):
 
         # Save the emotion history in a separate table
         new_record = EmotionHistory(
-            emotions=json.dumps(emotions),
+            emotions=json.dumps(emotions['emotions']),
             dominant_emotion=emotions['dominant_emotion'],  # Save the dominant emotion
             user_id=current_user.id
         )
