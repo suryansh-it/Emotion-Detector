@@ -138,7 +138,9 @@ def preview():
         for image in images:
             if image.image_data:
                 # No need to convert image_data to bytes; it's already in Base64 format
-                images_json.append({"image_data": image.image_data})  # Store the Base64 string directly
+                images_json.append({
+                    "id": image.image_id,  # Include image ID
+                    "image_data": image.image_data})  # Store the Base64 string directly
             else:
                 return jsonify({'error': 'Image data is missing for one or more images.'}), 500
 
