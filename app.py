@@ -134,6 +134,12 @@ def preview():
         images = ImagesData.query.filter_by(user_id=current_user.id)\
             .order_by(ImagesData.upload_time.desc()).limit(3).all()
 
+
+        # Fetch all images for the user, excluding the last 3 images
+        all_images = ImagesData.query.filter_by(user_id=current_user.id).all()
+        images_to_delete = [image for image in all_images if image not in images]
+
+
         images_json = []
         for image in images:
             if image.image_data:
@@ -143,6 +149,15 @@ def preview():
                     "image_data": image.image_data})  # Store the Base64 string directly
             else:
                 return jsonify({'error': 'Image data is missing for one or more images.'}), 500
+
+
+        # Delete older images (those not in the last 3)
+        for image in images_to_delete:
+            db.session.delete(image)
+        
+        # Commit the deletion changes
+        db.session.commit()
+
 
         return jsonify(images_json), 200
 
