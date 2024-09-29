@@ -57,7 +57,11 @@ def detect_emotion(image_data):
     # Get the emotion with the highest confidence score
     emotions = emotion_results[0]['emotions']
     
-    return emotions
+    # Find the dominant emotion
+    dominant_emotion = max(emotions, key=emotions.get)
+
+
+    return emotions , dominant_emotion
 
 
 # # Store image temporarily in PostgreSQL
@@ -187,6 +191,7 @@ def detectemotion(image_id):
         # Save the emotion history in a separate table
         new_record = EmotionHistory(
             emotions=json.dumps(emotions),
+            dominant_emotion=emotions['dominant_emotion'],  # Save the dominant emotion
             user_id=current_user.id
         )
         db.session.add(new_record)
