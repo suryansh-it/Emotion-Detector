@@ -52,4 +52,5 @@ class EmotionHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
     emotions = db.Column(db.JSON, nullable=False)  # Store emotions as JSON
+    dominant_emotion = db.Column(db.String, nullable=False)  # Store the dominant emotion
     user_id = db.Column(db.Integer, db.ForeignKey('user_table.id'), nullable=False)
