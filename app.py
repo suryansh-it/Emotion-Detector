@@ -239,7 +239,7 @@ def history():
 
     try: 
         # Query to get emotion history for the current user
-        emotion_history = EmotionHistory.query.filter_by(user_id =current_user.id).order_by(EmotionHistory.detected_at.desc()).all()
+        emotion_history = EmotionHistory.query.filter_by(user_id =current_user.id).order_by(EmotionHistory.timestamp.desc()).all()
         return render_template('history.html', emotion_history=emotion_history)
     
     except Exception as e:
