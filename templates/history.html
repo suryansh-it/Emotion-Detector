@@ -1,18 +1,31 @@
-{% extends 'base.html' %} {% block title %}Emotion History{% endblock %} {%
-block content %}
-<h2>Emotion History</h2>
-{% if emotion_history %}
-<ul class="list-group">
-  {% for record in emotion_history %}
-  <li class="list-group-item">
-    {{ record.timestamp }}:
-    <strong>Emotions:</strong> {{ record.emotions }}
-  </li>
-  {% endfor %}
-</ul>
-{% else %}
-<p>No emotion history available.</p>
-{% endif %} {% block script %}
-
-<script src="{{ url_for('static', filename='script.js') }}"></script>
-{% endblock %}{% endblock %}
+{% extends "base.html" %} {% block content %}
+<div class="container mt-5">
+  <h1>Emotion Detection History</h1>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Detected Emotions</th>
+          <th>Date & Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in emotion_history %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ record.emotions }}</td>
+          <td>{{ record.detected_at }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="3" class="text-center">
+            No emotion detection history found.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
