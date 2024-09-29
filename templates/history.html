@@ -1,4 +1,10 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% block css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/history.css') }}"
+/>
+<!-- Link to the specific CSS file for this template -->
+{% endblock %} {% block content %}
 <div class="container mt-5">
   <h1>Emotion Detection History</h1>
   <div class="table-responsive">
