@@ -7,6 +7,7 @@
         <tr>
           <th>#</th>
           <th>Detected Emotions</th>
+          <th>Dominant Emotions</th>
           <th>Date & Time</th>
         </tr>
       </thead>
@@ -16,7 +17,7 @@
           <td>{{ loop.index }}</td>
           <td>{{ record.emotions }}</td>
           <td>{{ record.dominant_emotion }}</td>
-          <td>{{ record.detected_at }}</td>
+          <td>{{ record.timestamp }}</td>
         </tr>
         {% else %}
         <tr>
