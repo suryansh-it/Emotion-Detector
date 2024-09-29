@@ -234,11 +234,16 @@ def signup():
 
 
 @app.route('/home/history' , methods = ['GET'])
-# @login_required
-def history(): 
-    # Query to get emotion history for the current user
-    emotion_history = EmotionHistory.query.filter_by(user_id =current_user.id).all()
-    return render_template('history.html', emotion_history=emotion_history)
+@login_required
+def history():
+
+    try: 
+        # Query to get emotion history for the current user
+        emotion_history = EmotionHistory.query.filter_by(user_id =current_user.id).order_by(EmotionHistory.detected_at.desc()).all()
+        return render_template('history.html', emotion_history=emotion_history)
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/home/logout')
