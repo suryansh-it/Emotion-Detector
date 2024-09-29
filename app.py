@@ -151,33 +151,37 @@ def preview():
 
 
 # Route 3: Select One Image for Emotion Detection
-@app.route('/detect_emotion/<int:image_id>', methods=['GET'])
-# @login_required
+@app.route('/detectemotion/<int:image_id>', methods=['GET'])
+@login_required
 def detectemotion(image_id):
-    image = ImagesData.query.get(image_id)
+    try:
+        image = ImagesData.query.get(image_id)
 
-    if not image:
-        return jsonify({'error': 'Image not found'}), 404
-    
-    # Detect emotion from the stored image
-    emotions = detect_emotion(base64.b64encode(image.image_data).decode('utf-8'))
+        if not image:
+            return jsonify({'error': 'Image not found'}), 404
 
- # Store the emotion data in the database as JSON string
-    image.emotion_data = json.dumps(emotions)
+        # Assuming detect_emotion is a function that takes a base64-encoded image and returns emotion data
+        emotions = detect_emotion(image.image_data)  # image.image_data is already base64 encoded
 
-    
-    # Save the emotion history in JSON format
-    new_record = EmotionHistory(
-        emotions=emotions,
-        user_id=current_user.id
-    )
-    db.session.add(new_record)
-    db.session.commit()
+        # Store the detected emotions in the image record (as JSON)
+        image.emotion_data = json.dumps(emotions)
+        db.session.commit()
 
-    # Delete the image after emotion detection
-    delete_image(image_id)
+        # Save the emotion history in a separate table
+        new_record = EmotionHistory(
+            emotions=emotions,
+            user_id=current_user.id
+        )
+        db.session.add(new_record)
+        db.session.commit()
 
-    return jsonify(emotions), 200
+        # Optionally, delete the image after detection if required
+        # delete_image(image_id)
+
+        return jsonify(emotions), 200
+
+    except Exception as e:
+        return jsonify({'error': f'An internal error occurred: {str(e)}'}), 500
 
 
 @app.route('/home/login', methods = ['GET' , 'POST'])

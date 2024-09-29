@@ -232,7 +232,7 @@ function detectEmotion() {
         return;
     }
 
-    fetch(`/detect_emotion/${selectedImageId}`, {
+    fetch(`/detectemotion/${selectedImageId}`, {
         method: 'GET'
     })
     .then(response => response.json())
