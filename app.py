@@ -61,7 +61,11 @@ def detect_emotion(image_data):
     dominant_emotion = max(emotions, key=emotions.get)
 
 
-    return emotions , dominant_emotion
+    
+    return {
+        "emotions": emotions,
+        "dominant_emotion": dominant_emotion
+    }
 
 
 # # Store image temporarily in PostgreSQL
@@ -182,16 +186,19 @@ def detectemotion(image_id):
             return jsonify({'error': 'Image not found'}), 404
 
         # Assuming detect_emotion is a function that takes a base64-encoded image and returns emotion data
-        emotions = detect_emotion(image.image_data)  # image.image_data is already base64 encoded
+        emotion_data = detect_emotion(image.image_data)  # image.image_data is already base64 encoded
+
+        if "error" in emotion_data:
+            return jsonify(emotion_data), 400  # Return an error if no face is detected
 
         # Store the detected emotions in the image record (as JSON)
-        image.emotion_data = json.dumps(emotions)
+        image.emotion_data = json.dumps(emotion_data)
         db.session.commit()
 
         # Save the emotion history in a separate table
         new_record = EmotionHistory(
-            emotions=json.dumps(emotions),
-            
+            emotions=json.dumps(emotion_data['emotions']),
+            dominant_emotion=emotion_data['dominant_emotion'],  # Add dominant emotion to the record
             user_id=current_user.id
         )
         db.session.add(new_record)
@@ -200,7 +207,7 @@ def detectemotion(image_id):
         # Optionally, delete the image after detection if required
         # delete_image(image_id)
 
-        return jsonify(emotions), 200
+        return jsonify(emotion_data), 200
 
     except Exception as e:
         return jsonify({'error': f'An internal error occurred: {str(e)}'}), 500
