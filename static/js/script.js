@@ -133,16 +133,57 @@ captureBtn.addEventListener('click', function () {
 });
 
 
+// function fetchPreviewImages() {
+//     fetch('/preview', {
+//         method: 'GET'
+//     })
+//         .then(response => response.json())
+//         .then(data => {
+//             console.log("Preview Data:", data);
+//             updatePreview(data);
+//         })
+//         .catch(error => console.error('Error fetching preview images:', error));
+// }
+
+// // Function to update the preview with the fetched images
+// function updatePreview(images) {
+//     // Clear the existing preview
+//     for (let i = 1; i <= 3; i++) {
+//         const previewImage = document.getElementById(`preview-${i}`);
+//         previewImage.src = '';  // Clear existing image
+//         previewImage.style.display = 'none';  // Hide if no image available
+//     }
+
+//     // Add the new images to the preview (up to 3)
+//     images.forEach((image, index) => {
+//         if (index < 3 && image.image_data) {
+//             const previewImage = document.getElementById(`preview-${index + 1}`);
+            
+//             // Directly set the src to the Base64 string
+//             previewImage.src = `data:image/jpeg;base64,${image.image_data}`;
+//             previewImage.style.display = 'block';  // Show the image
+//         }
+//     });
+// }
+
+
+let selectedImageId = null;  // Track the selected image
+
+// Fetch preview images on page load
+window.onload = function() {
+    fetchPreviewImages();
+};
+
 function fetchPreviewImages() {
     fetch('/preview', {
         method: 'GET'
     })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Preview Data:", data);
-            updatePreview(data);
-        })
-        .catch(error => console.error('Error fetching preview images:', error));
+    .then(response => response.json())
+    .then(data => {
+        console.log("Preview Data:", data);
+        updatePreview(data);
+    })
+    .catch(error => console.error('Error fetching preview images:', error));
 }
 
 // Function to update the preview with the fetched images
@@ -152,16 +193,58 @@ function updatePreview(images) {
         const previewImage = document.getElementById(`preview-${i}`);
         previewImage.src = '';  // Clear existing image
         previewImage.style.display = 'none';  // Hide if no image available
+        previewImage.classList.remove("selected"); // Remove selected class
     }
 
     // Add the new images to the preview (up to 3)
     images.forEach((image, index) => {
         if (index < 3 && image.image_data) {
             const previewImage = document.getElementById(`preview-${index + 1}`);
-            
-            // Directly set the src to the Base64 string
             previewImage.src = `data:image/jpeg;base64,${image.image_data}`;
             previewImage.style.display = 'block';  // Show the image
+            previewImage.setAttribute('data-image-id', image.id);  // Set the image ID for selection
         }
     });
+}
+
+// Function to select an image
+function selectImage(previewIndex) {
+    // Clear previously selected image
+    for (let i = 1; i <= 3; i++) {
+        document.getElementById(`preview-${i}`).classList.remove("selected");
+    }
+
+    // Mark the selected image
+    const previewImage = document.getElementById(`preview-${previewIndex}`);
+    previewImage.classList.add("selected");
+
+    // Store the selected image ID
+    selectedImageId = previewImage.getAttribute('data-image-id');
+
+    // Show the detect emotion button
+    document.getElementById('detect-emotion-btn').style.display = 'block';
+}
+
+// Function to detect emotion for the selected image
+function detectEmotion() {
+    if (!selectedImageId) {
+        alert('Please select an image first!');
+        return;
+    }
+
+    fetch(`/detect_emotion/${selectedImageId}`, {
+        method: 'GET'
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Emotion Data:', data);
+        displayEmotion(data);
+    })
+    .catch(error => console.error('Error detecting emotion:', error));
+}
+
+// Function to display the detected emotion
+function displayEmotion(emotionData) {
+    const emotionResult = document.getElementById('emotion-data');
+    emotionResult.textContent = JSON.stringify(emotionData);
 }
