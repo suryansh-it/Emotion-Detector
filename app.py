@@ -85,11 +85,11 @@ def detect_emotion(image_data):
     
 
 # delete imag after use
-def delete_image ():
-    images = ImagesData.query.order_by(ImagesData.upload_time.desc()).limit(3).all()
-    db.session.delete(images)
-    db.session.commit()
-    return jsonify({'message': 'project post deleted'})
+# def delete_image ():
+#     images = ImagesData.query.order_by(ImagesData.upload_time.desc()).limit(3).all()
+#     db.session.delete(images)
+#     db.session.commit()
+#     return jsonify({'message': 'project post deleted'})
 #     with engine.connect() as connection:
 #         delete_query = images_table.delete().where(images_table.c.image_id == image_id)
 #         connection.execute(delete_query)
@@ -190,8 +190,8 @@ def detectemotion(image_id):
 
         # Save the emotion history in a separate table
         new_record = EmotionHistory(
-            emotions=json.dumps(emotions['emotions']),
-            dominant_emotion=emotions['dominant_emotion'],  # Save the dominant emotion
+            emotions=json.dumps(emotions),
+            
             user_id=current_user.id
         )
         db.session.add(new_record)

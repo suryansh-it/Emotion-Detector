@@ -206,7 +206,18 @@ function detectEmotion() {
             alert(data.error);
         } else {
             // Display the detected emotions
-            document.getElementById('emotion-data').textContent = JSON.stringify(data);
+            const emotions = data.emotions;
+            const dominantEmotion = data.dominant_emotion;
+
+            // Prepare display text
+            let emotionText = "Detected Emotions:\n";
+            for (const [emotion, score] of Object.entries(emotions)) {
+                emotionText += `${emotion}: ${score.toFixed(2)}\n`;
+            }
+            emotionText += `\nDominant Emotion: ${dominantEmotion}`;
+
+            // Update the DOM with the formatted emotion data
+            document.getElementById('emotion-data').textContent = emotionText;
         }
     })
     .catch(error => {
@@ -214,6 +225,7 @@ function detectEmotion() {
         alert('Failed to detect emotion.');
     });
 }
+
 
 // Fetch preview images and populate the preview section
 let previewImages = [];  // This will store the fetched image data
