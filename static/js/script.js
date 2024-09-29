@@ -167,13 +167,51 @@ captureBtn.addEventListener('click', function () {
 // }
 
 
-let selectedImageId = null;  // Track the selected image
+let selectedImageId = null;  // This will hold the ID of the selected image
 
-// Fetch preview images on page load
-window.onload = function() {
-    fetchPreviewImages();
-};
+// Function to handle image selection
+function selectImage(index) {
+    // Highlight the selected image (if needed, add some visual effect)
+    for (let i = 1; i <= 3; i++) {
+        const previewImage = document.getElementById(`preview-${i}`);
+        previewImage.style.border = (i === index) ? '2px solid blue' : 'none';
+    }
 
+    // Get the selected image ID from the fetched data (you'll need to have this stored when fetching images)
+    selectedImageId = previewImages[index - 1].id;  // Assuming `previewImages` contains the fetched image data
+
+    // Show the 'Detect Emotion' button
+    document.getElementById('detect-emotion-btn').style.display = 'block';
+}
+
+// Function to detect emotion for the selected image
+function detectEmotion() {
+    if (!selectedImageId) {
+        alert("Please select an image first.");
+        return;
+    }
+
+    // Send request to detect emotion for the selected image
+    fetch(`/detect_emotion/${selectedImageId}`, {
+        method: 'GET'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            // Display the detected emotions
+            document.getElementById('emotion-data').textContent = JSON.stringify(data);
+        }
+    })
+    .catch(error => {
+        console.error('Error detecting emotion:', error);
+        alert('Failed to detect emotion.');
+    });
+}
+
+// Fetch preview images and populate the preview section
+let previewImages = [];  // This will store the fetched image data
 function fetchPreviewImages() {
     fetch('/preview', {
         method: 'GET'
@@ -181,7 +219,9 @@ function fetchPreviewImages() {
     .then(response => response.json())
     .then(data => {
         console.log("Preview Data:", data);
-        updatePreview(data);
+        previewImages = data;  // Store the fetched images
+
+        updatePreview(previewImages);
     })
     .catch(error => console.error('Error fetching preview images:', error));
 }
@@ -193,58 +233,29 @@ function updatePreview(images) {
         const previewImage = document.getElementById(`preview-${i}`);
         previewImage.src = '';  // Clear existing image
         previewImage.style.display = 'none';  // Hide if no image available
-        previewImage.classList.remove("selected"); // Remove selected class
     }
 
     // Add the new images to the preview (up to 3)
     images.forEach((image, index) => {
         if (index < 3 && image.image_data) {
             const previewImage = document.getElementById(`preview-${index + 1}`);
-            previewImage.src = `data:image/jpeg;base64,${image.image_data}`;
+            
+            // Convert Base64 to binary data
+            const byteCharacters = atob(image.image_data);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: 'image/jpeg' });
+
+            // Create a temporary URL for the blob and set it as the image src
+            const blobUrl = URL.createObjectURL(blob);
+            previewImage.src = blobUrl;
             previewImage.style.display = 'block';  // Show the image
-            previewImage.setAttribute('data-image-id', image.id);  // Set the image ID for selection
         }
     });
 }
 
-// Function to select an image
-function selectImage(previewIndex) {
-    // Clear previously selected image
-    for (let i = 1; i <= 3; i++) {
-        document.getElementById(`preview-${i}`).classList.remove("selected");
-    }
-
-    // Mark the selected image
-    const previewImage = document.getElementById(`preview-${previewIndex}`);
-    previewImage.classList.add("selected");
-
-    // Store the selected image ID
-    selectedImageId = previewImage.getAttribute('data-image-id');
-
-    // Show the detect emotion button
-    document.getElementById('detect-emotion-btn').style.display = 'block';
-}
-
-// Function to detect emotion for the selected image
-function detectEmotion() {
-    if (!selectedImageId) {
-        alert('Please select an image first!');
-        return;
-    }
-
-    fetch(`/detectemotion/${selectedImageId}`, {
-        method: 'GET'
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Emotion Data:', data);
-        displayEmotion(data);
-    })
-    .catch(error => console.error('Error detecting emotion:', error));
-}
-
-// Function to display the detected emotion
-function displayEmotion(emotionData) {
-    const emotionResult = document.getElementById('emotion-data');
-    emotionResult.textContent = JSON.stringify(emotionData);
-}
+// Call this function to load preview images when the page loads
+fetchPreviewImages();
